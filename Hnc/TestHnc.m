@@ -1,12 +1,11 @@
-% clear all
-% close all
-% clc
-function [P, Patt, Pavg, Pavg_att] = TestHnc(P)
-
-
-
+function [P, Patt, Pavg, Pavg_att] = TestHnc(P, ylimit)
+% 
+% This is a function to analyse a stack of projections. Contrary to what the 
+% name suggests it may be used with any P-3D matrix provided it is passed as first argument,
+% otherwise it will look for hnc in the current folder
+% 
 %% read image names only
-if nargin == 0
+if nargin < 1
     path=cd;
     D=dir;
 
@@ -43,17 +42,29 @@ if nargin == 0
         fclose(fid);
     end
 end
+if nargin < 2
+%         ylimit = [0 2^16-1];
+         ylimit = [];
+end
+
+        
     %% Lin attenuation
 
     IDark = 0;
     I0 = 2^16-1;
-    Patt_0 = P-IDark; Patt_0(Patt_0<1) = 1;
+    Patt_0 = P-IDark; 
+    
+%     Patt_0(Patt_0<1) = 1;
+    Patt_0 = Patt_0+1;
 
     Patt_1 = log(double(Patt_0));
 
     Patt_2 = log(I0-IDark)*ones(size(Patt_1)); %I0 - IDark must of course be >=1
 
     Patt = Patt_2 - Patt_1;
+    
+    ylimit_att = ylimit + 1;
+    ylimit_att = log(ylimit_att);
 
     %% Cropping
     Pcut_att=Patt(2:end-1,1:end-3,:);
@@ -75,6 +86,9 @@ end
     plot(Pavg_att,'-r')
     xlabel("Proj number", 'FontSize', 20 )
     ylabel("\mu", 'FontSize', 30 )
+    if ~isempty(ylimit)
+        ylim(ylimit_att)
+    end
     hold off
 
     figure(56)
@@ -83,62 +97,27 @@ end
     plot(Pavg,'-b')
     xlabel("Proj number", 'FontSize', 20 )
     ylabel("Intensity", 'FontSize', 20 )
+    if ~isempty(ylimit)
+        ylim(ylimit)
+    end
     hold off
     
-    %% Plotting average attenuation and intensity profile
-    
-    Prof_avg = squeeze(mean(Pcut,2));
-    Prof_att_avg = squeeze(mean(Pcut_att,2));
-    
-    figure
-    hold on
-    for i = 1:5:size(Prof_att_avg,2)
-        plot(Prof_att_avg(:,i))
-    end
-%     figure(57)
+     %% Plotting average attenuation and intensity profile
+%     
+%     Prof_avg = squeeze(mean(Pcut,2));
+%     Prof_att_avg = squeeze(mean(Pcut_att,2));
+%     
+%     figure
 %     hold on
-%     title("Average intensity profile in every projection", 'FontSize', 20)
-%     plot(Prof_avg,'-b')
-%     xlabel("Proj number", 'FontSize', 20 )
-%     ylabel("Intensity", 'FontSize', 20 )
-%     hold off
+%     for i = 1:5:size(Prof_att_avg,2)
+%         plot(Prof_att_avg(:,i))
+%     end
+% %     figure(57)
+% %     hold on
+% %     title("Average intensity profile in every projection", 'FontSize', 20)
+% %     plot(Prof_avg,'-b')
+% %     xlabel("Proj number", 'FontSize', 20 )
+% %     ylabel("Intensity", 'FontSize', 20 )
+% %     hold off
     
 end
-% 
-% %%
-% % Pcut=P(:,2:end-1,:); %crop and avoid values in the first and last column 768-2=766
-% % e^0.133516
-% % Prepare Hnc header
-% load hncHeaderTemplate.mat
-% info = hncHeaderTemplate;
-% info.uiSizeX = 766; info.uiSizeY = 1021;
-% 
-% % ang=linspace(0,360,613);
-% 
-% % Write to hnc files
-% for k = 1:length(fnames);
-%     % The recorded angle value follows the inverted convention of normal Hnc convention
-%     info.dCTProjectionAngle = ang(k);
-%     info.dCBCTPositiveAngle = mod(ang(k)+270,360);
-%     HncWrite(info,Pcut(:,:,k),['.\\CroppedByMatlab\\' num2str(k,'Proj_%05d.hnc')]);
-% end;
-% 
-% 
-% %% 
-% 
-% % Pcut=P(:,2:end-1,:); %crop and avoid values in the first and last column 768-2=766
-% % e^0.133516
-% % Prepare Hnc header
-% load hncHeaderTemplate.mat
-% info = hncHeaderTemplate;
-% info.uiSizeX = 768; info.uiSizeY = 1024;
-% 
-% % ang=linspace(0,360,613);
-% 
-% % Write to hnc files
-% for k = 1:size(fnames);
-%     % The recorded angle value follows the inverted convention of normal Hnc convention
-%     info.dCTProjectionAngle = ang(k);
-%     info.dCBCTPositiveAngle = mod(ang(k)+270,360);
-%     HncWrite(info,P(:,:,k),['.\\CroppedByMatlab\\' num2str(k,'Proj_%05d.hnc')]);
-% end;
