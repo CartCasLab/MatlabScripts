@@ -1,4 +1,4 @@
-function struct2ini(filename,Structure)
+function struct2iniPazienti(filename,Structure)
 %==========================================================================
 % Author:      Dirk Lohse ( dirklohse@web.de )
 % Version:     0.1a

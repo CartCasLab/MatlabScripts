@@ -1,6 +1,6 @@
-function Result = ini2struct(FileName)
+function Result = imglabels2struct(FileName)
 %==========================================================================
-%  Author GBe
+%  Author Gabriele Belotti
 %==========================================================================
 % 
 % Serves as imgLabels reader to obtain info on raw projs
