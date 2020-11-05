@@ -10,7 +10,7 @@ function [P, P_raw] = HncRawRead(fn, shape)
 % ------------------------------------------
 % INPUT
 %   fn:     The path and filename of the input file.
-%   shape:  Optional 2x1 vector for resolution/shape of image
+%   shape:  Optional 1x2 vector for resolution/shape of image
 % ------------------------------------------
 %% Optional sizing
 
