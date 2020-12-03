@@ -5,9 +5,9 @@ clc
 
 %% Generate names
 
-for k = 1:600 % change to your needs
+for k = 1:1 % change to your needs
     
-    fnames{k} = num2str(k+1,'image_%d.hnc'); 
+    fnames{k} = num2str(k,'image_%05d.hnc'); 
     
     
 end
@@ -32,10 +32,15 @@ end
 
 %% write raws
 
+rawdir = "RAW";
+mkdir(rawdir);
+cd(rawdir)
+
 for k= 1:size(P_raw,3)
-    fid = fopen(num2str(k-1,'image_%d.raw'),'w');
+    fid = fopen(num2str(k,'image_%05d.raw'),'w');
     P(P>2^16-1) = 2^16 -1;
-    fwrite(fid,P(:),'uint16');    
+    tmp = P_raw(:,:,k);
+    fwrite(fid,tmp(:),'uint16');    
     fclose(fid);
 end
 
