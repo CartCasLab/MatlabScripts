@@ -14,6 +14,7 @@ nchannels = 1;
 Ainfo = [];
 for i=1:20
   t = fgetl(fp);
+  disp(t)
 
   [a,cnt] = sscanf(t,'NDims = %d',1);
   if (cnt > 0)
@@ -42,10 +43,10 @@ for i=1:20
   end
 
   %% [a,cnt,errmsg,ni] = sscanf(t,'DimSize = ',1);
-  ni = strfind(t,'DimSize = ');
-  if (~isempty(ni))
-    ni = ni + length('DimSize = ');
-    [b,cnt] = sscanf(t(ni:end),'%d');
+
+  if contains(t,'DimSize')
+    spstr = strsplit(t,'=');
+    [b,cnt] = sscanf(spstr{end},'%d');
     if (cnt == dims)
       sz = b;
       continue;
@@ -65,10 +66,9 @@ for i=1:20
   end
 
   %% [a,cnt,errmsg,ni] = sscanf(t,'ElementSpacing = ',1);
-  ni = strfind(t,'ElementSpacing = ');
-  if (~isempty(ni))
-    ni = ni + length('ElementSpacing = ');
-    [b,cnt] = sscanf(t(ni:end),'%g');
+  if contains(t,'ElementSpacing')
+    spstr = strsplit(t,'=');
+    [b,cnt] = sscanf(spstr{end},'%g');
     if (cnt == dims)
       Ainfo.ElementSpacing = b;
       continue;
@@ -76,10 +76,9 @@ for i=1:20
   end
   
   %% [a,cnt,errmsg,ni] = sscanf(t,'Offset = ',1);
-  ni = strfind(t,'Offset = ');
-  if (~isempty(ni))
-    ni = ni + length('Offset = ');
-    [b,cnt] = sscanf(t(ni:end),'%g');
+  if contains(t,'Offset')
+    spstr = strsplit(t,'=');
+    [b,cnt] = sscanf(spstr{end},'%g');
     if (cnt == dims)
       Ainfo.Offset = b;
       continue;
